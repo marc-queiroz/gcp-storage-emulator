@@ -588,7 +588,6 @@ def options(request, response, storage, *args, **kwargs):
     response.status = HTTPStatus.OK
     response["Content-Type"] = "text/html; charset=UTF-8"
     response["Allow"] = "OPTIONS,GET,POST,PUT,DELETE,PATCH"
-    response["Access-Control-Allow-Origin"] = "*"
     response["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
     response["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
     response.write("")
