@@ -1,6 +1,5 @@
 FROM python:alpine
 
-# Permite que logs apareçam imediatamente
 ENV PYTHONUNBUFFERED=1
 ENV APP_HOME=/app
 ENV PORT=8080
@@ -10,16 +9,10 @@ ENV STORAGE_DIR=storage
 
 WORKDIR $APP_HOME
 
-# Instale dependências do sistema se necessário (exemplo: gcc, libpq-dev)
-# RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
-
-# Copie apenas arquivos de dependências primeiro para melhor cache
-COPY pyproject.toml setup.py ./
-RUN pip install --no-cache-dir .
-
-# Agora copie o restante do código
-COPY README.md ./
+COPY pyproject.toml setup.py README.md ./
 COPY src src/
+
+RUN pip install --no-cache-dir .
 
 ENTRYPOINT ["gcp-storage-emulator"]
 CMD ["start"]
