@@ -1,18 +1,25 @@
-FROM python:3.12.5-slim
+FROM python:alpine
 
-# Allow statements and log messages to immediately appear in the Knative logs
-ENV PYTHONUNBUFFERED True
-ENV APP_HOME /app
-ENV PORT 8080
-ENV HOST 0.0.0.0
-ENV STORAGE_BASE /
-ENV STORAGE_DIR storage
+# Permite que logs apareçam imediatamente
+ENV PYTHONUNBUFFERED=1
+ENV APP_HOME=/app
+ENV PORT=8080
+ENV HOST=0.0.0.0
+ENV STORAGE_BASE=/
+ENV STORAGE_DIR=storage
 
-# Python app installation
 WORKDIR $APP_HOME
-COPY README.md pyproject.toml setup.py ./
+
+# Instale dependências do sistema se necessário (exemplo: gcc, libpq-dev)
+# RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
+
+# Copie apenas arquivos de dependências primeiro para melhor cache
+COPY pyproject.toml setup.py ./
+RUN pip install --no-cache-dir .
+
+# Agora copie o restante do código
+COPY README.md ./
 COPY src src/
-RUN pip install .
 
 ENTRYPOINT ["gcp-storage-emulator"]
 CMD ["start"]
